@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: PushPull Subscription API
+  version: 1.0.0
+  description: API for Banglalink SDP Consent, Activation, and Unsubscription
+
+servers:
+  - url: http://localhost:8080/bl_push_pull/api
+    description: Local development
+  - url: http://localhost:8080/bl_push_pull
+    description: Local development webhook
+  - url: http://192.168.102.36/bl_push_pull/api
+    description: Production
+  - url: http://192.168.102.36/bl_push_pull
+    description: Production webhook
+
+paths:
+  /subscription.php:
+    get:
+      summary: Consent or Activate a subscription
+      description: Sends a consent or activation request using keyword from `mo` query parameter.
+      parameters:
+        - in: query
+          name: msisdn
+          schema:
+            type: string
+            example: "8801911890878"
+          required: true
+          description: The subscriber's mobile number.
+        - in: query
+          name: mo
+          schema:
+            type: string
+            example: "START SU"
+          required: true
+          description: Keyword for activation (e.g., START SU).
+        - in: query
+          name: consentNo
+          schema:
+            type: string
+            example: "Y"
+          required: false
+          description: Consent number (optional, default is 'Y').
+      responses:
+        '200':
+          description: Operation result
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /unsubscribe.php:
+    get:
+      summary: Unsubscribe from a service
+      description: Unsubscribe using a keyword from `mo` query parameter.
+      parameters:
+        - in: query
+          name: msisdn
+          schema:
+            type: string
+            example: "8801911890878"
+          required: true
+          description: The subscriber's mobile number.
+        - in: query
+          name: mo
+          schema:
+            type: string
+            example: "STOP SU"
+          required: true
+          description: Keyword for deactivation (e.g., STOP SU).
+      responses:
+        '200':
+          description: Unsubscription result
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /sync_receiver.php:
+    post:
+      summary: Simulate a webhook call to receiver
+      description: Sends a sample webhook payload (Activation, Renewal, Migration, Unsub)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestId:
+                  type: string
+                  example: "REQ123456789"
+                requestTimeStamp:
+                  type: string
+                  example: "2025-04-15 14:45:00"
+                msisdn:
+                  type: string
+                  example: "8801912345678"
+                featureId:
+                  type: string
+                  example: "DataSync"
+                requestParam:
+                  type: object
+                  properties:
+                    subscriptionOfferID:
+                      type: string
+                      example: "9913110029"
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: string
+                      example:
+                        - name: "TransactionId"
+                          value: "TX123456"
+                        - name: "ClientTransactionId"
+                          value: "CL987654"
+                        - name: "ChargeAmount"
+                          value: "10"
+                        - name: "SubscriptionStatus"
+                          value: "SUCCESS"
+                        - name: "Reason"
+                          value: "Auto Renew"
+                        - name: "Type"
+                          value: "NotifyRenewal"
+                        - name: "OfferCode"
+                          value: "sports_update_daily"
+      responses:
+        '200':
+          description: Webhook accepted and processed
+          content:
+            application/json:
+              schema:
+                type: object

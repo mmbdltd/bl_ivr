@@ -1,0 +1,40 @@
+# Ignore PHP built files and cache
+/vendor/
+composer.lock
+composer.phar
+
+# Ignore logs
+*.log
+/logs/
+/storage/logs/
+/var/log/
+/*.log
+
+# Ignore environment files
+.env
+.env.*
+
+
+# Ignore IDE/editor files
+*.sublime-workspace
+*.sublime-project
+*.idea/
+*.vscode/
+*.DS_Store
+
+# Ignore system files
+Thumbs.db
+.DS_Store
+
+# Ignore PHPUnit test results
+phpunit.xml
+phpunit.result.cache
+
+# Ignore session/cache/temp directories
+/cache/
+/tmp/
+/sessions/
+
+# Ignore upload folders
+/uploads/
+/public/uploads/
