@@ -2,7 +2,7 @@
 function processSsdTech($responseData ): void
 {
     date_default_timezone_set("Asia/Dhaka");
-    $dateTime = date("Y-m-d H:i:s");
+   // $dateTime = date("Y-m-d H:i:s");
     $log_filename = "syncLogs/syncReceiver_" . date("Y_m_d") . ".txt";
 
     $logDir = dirname($log_filename);
