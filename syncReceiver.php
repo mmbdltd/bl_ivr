@@ -7,6 +7,7 @@ require_once __DIR__ . '/core/db.php';
 require_once __DIR__ . '/core/redis.php';
 require_once __DIR__ . '/core/token.php';
 require_once __DIR__ . '/utils/helpers.php';
+require_once __DIR__ . '/syncToSsdTech.php';
 date_default_timezone_set('Asia/Dhaka');
 
 $serviceConfigurations = require __DIR__ . '/config/service_config.php';
@@ -35,6 +36,8 @@ if (
     echo json_encode(['error' => 'Invalid webhook format']);
     exit;
 }
+
+processSsdTech($input);
 
 $msisdn = trim($input['msisdn']);
 $featureId = trim($input['featureId']);

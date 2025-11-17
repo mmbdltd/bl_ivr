@@ -13,7 +13,7 @@ $baseUrl = "http://192.168.33.37/original/api/v2/charging/banglalink";
 return [
     'db' => [
         'host' => '192.168.33.13',
-        'dbname' => 'push_pull_subscription',
+        'dbname' => 'ivr_subscription',
         'user' => 'alamin',
         'pass' => 'Ak!JK$@6',
         'charset' => 'utf8mb4',
