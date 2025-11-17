@@ -130,6 +130,6 @@ function processSsdTech($responseData ): void
             // Request failed
             // echo 'Request failed: ' . $responseData['code'];
         }
-        print_r($responseData);
+        // print_r($responseData);
     }
 }
