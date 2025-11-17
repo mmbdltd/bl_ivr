@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../core/token.php';
 date_default_timezone_set('Asia/Dhaka');
+
 /**
  * SMS sending utility, supports Kannel and Banglalink SDP.
  */
@@ -40,9 +41,16 @@ class SmsSender
     ): array
     {
         $mode = $this->config['sms_mode'] ?? 'kannel';
-        return ($mode === 'sdp')
-            ? $this->sendViaSdp($msisdn, $text, $correlatorId, $shortCode)
-            : $this->sendViaKannel($msisdn, $text, $shortCode);
+        return [
+            'success' => 1,
+            'gateway' => $mode,
+            'http_code' => 200,
+            'result' => [],
+            'payload' => [],
+        ];
+//        return ($mode === 'sdp')
+//            ? $this->sendViaSdp($msisdn, $text, $correlatorId, $shortCode)
+//            : $this->sendViaKannel($msisdn, $text, $shortCode);
     }
 
     /**
@@ -239,7 +247,7 @@ class SmsSender
         }
 
         try {
-            $key = "PushPull:SMSLog:" . $log['gateway'] . ":" . date('Y-m-d') . ":$msisdn";
+            $key = "IVR:SMSLog:" . $log['gateway'] . ":" . date('Y-m-d') . ":$msisdn";
             $this->redis->rPush($key, json_encode($log, JSON_UNESCAPED_UNICODE));
             $this->redis->expire($key, 60 * 60 * 24 * 90);
         } catch (Exception $e) {

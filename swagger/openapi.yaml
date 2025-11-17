@@ -1,17 +1,17 @@
 openapi: 3.0.0
 info:
-  title: PushPull Subscription API
+  title: IVR Subscription API
   version: 1.0.0
   description: API for Banglalink SDP Consent, Activation, and Unsubscription
 
 servers:
-  - url: http://localhost:8080/bl_push_pull/api
+  - url: http://localhost:8080/bl_ivr/api
     description: Local development
-  - url: http://localhost:8080/bl_push_pull
+  - url: http://localhost:8080/bl_ivr
     description: Local development webhook
-  - url: http://192.168.102.36/bl_push_pull/api
+  - url: http://192.168.102.36/bl_ivr/api
     description: Production
-  - url: http://192.168.102.36/bl_push_pull
+  - url: http://192.168.102.36/bl_ivr
     description: Production webhook
 
 paths:

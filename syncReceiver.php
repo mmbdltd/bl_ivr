@@ -91,7 +91,7 @@ function logToRedis($redis, $msisdn, $featureId, $command, $requestId, $input)
 {
     try {
         $keyDate = date('Y-m-d');
-        $key = "PushPull:webhook:$keyDate:$featureId:$command:$msisdn";
+        $key = "IVR:webhook:$keyDate:$featureId:$command:$msisdn";
 
         $entry = json_encode([
             'timestamp' => date('c'),

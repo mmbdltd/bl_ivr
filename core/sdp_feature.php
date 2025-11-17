@@ -78,7 +78,7 @@ function activateFeature($params): array
     );
 
     // Redis logging
-    $logKey = "PushPull:request:" . date('Y-m-d') . ":$serviceName:$featureId:{$params['msisdn']}";
+    $logKey = "IVR:request:" . date('Y-m-d') . ":$serviceName:$featureId:{$params['msisdn']}";
     $logEntry = [
         'timestamp' => date('Y-m-d H:i:s'),
         'requestId' => $requestId,
@@ -140,7 +140,7 @@ function deactivateFeature($params): array
     }
 
     // Redis logging
-    $logKey = "PushPull:request:" . date('Y-m-d') . ":$serviceName:UNSUBSCRIPTION:{$params['msisdn']}";
+    $logKey = "IVR:request:" . date('Y-m-d') . ":$serviceName:UNSUBSCRIPTION:{$params['msisdn']}";
     $logEntry = [
         'timestamp' => date('Y-m-d H:i:s'),
         'requestId' => $requestId,
