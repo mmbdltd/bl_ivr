@@ -3,7 +3,12 @@ function processSsdTech($responseData ): void
 {
     date_default_timezone_set("Asia/Dhaka");
     $dateTime = date("Y-m-d H:i:s");
-    $log_filename = "syncReceiver_logs/syncReceiver_" . date("Y_m_d") . ".txt";
+    $log_filename = "syncLogs/syncReceiver_" . date("Y_m_d") . ".txt";
+
+    $logDir = dirname($log_filename);
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0777, true);
+    }
 
     $requestData = array();
     foreach ($responseData['requestParam']['data'] as $item) {
