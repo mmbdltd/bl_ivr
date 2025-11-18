@@ -351,16 +351,6 @@ if ($templateType && isset($smsTemplates[$templateType][$serviceName])) {
     send_sms($msisdn, $smsText, $ShortCode, $offerCode, $config, $pdo, $redis);
 }
 
-// Content message for SUB1 or REN1
-if (in_array($data['SubscriberLifeCycle'], ['SUB1', 'REN1'])) {
-    global $contentPdo;
-    $smsText = get_content_message($serviceName, $contentPdo);
-
-    if ($smsText) {
-        send_sms($msisdn, $smsText, $ShortCode, $offerCode, $config, $pdo, $redis);
-    }
-}
-
 $returnToSDP = [
     "requestId" => $requestId,
     "responseId" => "$subscriberId",

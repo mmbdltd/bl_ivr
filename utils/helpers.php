@@ -33,59 +33,6 @@ function mapActionType($status, $lifecycle): string
     return $map[$status][$lifecycle] ?? 'UNKNOWN';
 }
 
-/**
- * Fetch a daily content message by service.
- */
-function get_content_message($serviceName, $contentPdo)
-{
-    global $serviceConfigurations;
-    $serviceKeywordMap = $serviceConfigurations['serviceKeywordMap'];
-    $keyword = $serviceKeywordMap[$serviceName] ?? null;
-
-    if (!$keyword) return null;
-    // $today = date('Y-m-d');
-
-    $contentQuery = "SELECT id as content_id, trim(message) as message FROM contents
-         WHERE keyword = ? AND DATE(scheduled_at) = DATE(NOW()) AND status = 1
-         ORDER BY id ASC LIMIT 1";
-
-    $stmt = $contentPdo->prepare($contentQuery);
-    $stmt->execute([$keyword]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    return $row['message'] ?? null;
-}
-
-/**
- * Send Unicode SMS using Kannel.
- */
-function sendUnicodeSmsViaKannel($to, $message, $from = '16303'): array
-{
-    global $config;
-    $params = [
-        'username' => $config['kannel']['username'] ?? 'bluser',
-        'password' => $config['kannel']['password'] ?? 'banglalink54',
-        'to' => $to,
-        'from' => $from,
-        'text' => $message,
-        'coding' => $config['kannel']['coding'] ?? 2,
-        'charset' => $config['kannel']['charset'] ?? 'UTF-8',
-    ];
-    $kannelUrl = $config['kannel']['charset'] ?? 'http://192.168.33.37:13131/cgi-bin/sendsms';
-    $url = $kannelUrl . '?' . http_build_query($params);
-
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $result = curl_exec($ch);
-    $err = curl_error($ch);
-    curl_close($ch);
-
-    if ($err) {
-        return ['success' => false, 'error' => $err];
-    }
-    return ['success' => true, 'response' => $result];
-}
-
 
 /**
  * Send an SMS using SmsSender class, defaulting to config gateway.
@@ -118,4 +65,56 @@ function sendAlreadySubscribedSms($responseData, $msisdn, $serviceName, $shortCo
             send_sms($msisdn, $smsText, $shortCode, $offerCode, $config, $pdo, $redis);
         }
     }
+}
+
+/**
+ * Get subscriber data by MSISDN excluding Deactivated users.
+ * Returns an array of objects.
+ *
+ * @param PDO $pdo Active PDO connection
+ * @param string $msisdn Mobile number (can be empty string based on your query)
+ * @param string $operatorCode Default '1'
+ * @return array List of row objects
+ */
+function getActiveSubscriberByMsisdn(string $msisdn = '', string $operatorCode = '1'): array
+{
+    global $pdo;
+
+    $sql = "SELECT
+            id,
+            msisdn,
+            subscription_offer_id,
+            operator_code,
+            operator,
+            offer_code,
+            service_name,
+            action_type,
+            subscription_status,
+            subscriber_lifecycle,
+            transaction_id,
+            client_transaction_id,
+            channel,
+            shortcode,
+            billing_id,
+            charge_amount,
+            success_count,
+            grease_count,
+            suspend_count,
+            reason,
+            command,
+            created_at,
+            updated_at
+        FROM ivr_subscription.subscribers
+        WHERE msisdn = :msisdn
+          AND operator_code = :operatorCode
+          AND subscription_status NOT IN ('S','D')
+    ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':msisdn' => $msisdn,
+        ':operatorCode' => $operatorCode,
+    ]);
+
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }

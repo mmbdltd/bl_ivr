@@ -10,10 +10,10 @@ return [
         'stop bw' => ['offerId' => '9913110013', 'serviceName' => '16303_momagic_ivr_Weekly_auto'],
         'stop bm' => ['offerId' => '9913110014', 'serviceName' => '16303_momagic_ivr_monthly_auto'],
     ],
-    'serviceKeywordMap' => [
-        '16303_momagic_ivr_daily_auto' => 'DAILY',
-        '16303_momagic_ivr_Weekly_auto' => 'WEEKLY',
-        '16303_momagic_ivr_monthly_auto' => 'MONTHLY',
+    'serviceKeyMap' => [
+        '1' => '9913110012',
+        '2' => '9913110013',
+        '3' => '9913110014',
     ],
     'smsTemplates' => [
         // Low balance (parking) ACTIVATION_PARKING(sub2)
