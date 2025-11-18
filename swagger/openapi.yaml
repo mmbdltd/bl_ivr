@@ -31,9 +31,9 @@ paths:
           name: mo
           schema:
             type: string
-            example: "START SU"
+            example: "START BD"
           required: true
-          description: Keyword for activation (e.g., START SU).
+          description: Keyword for activation (e.g., START BD).
         - in: query
           name: consentNo
           schema:
@@ -48,6 +48,163 @@ paths:
             application/json:
               schema:
                 type: object
+
+  /subscribe:
+    post:
+      summary: Subscribe a phone number
+      description: Calls activateFeature function to process subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                calling_number:
+                  type: string
+                called_number:
+                  type: string
+                dtmf_digit:
+                  type: string
+                consentNo:
+                  type: string
+      responses:
+        '200':
+          description: Subscription result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  request_id:
+                    type: string
+
+  /unsubscribe:
+    post:
+      summary: Unsubscribe a phone number
+      description: Calls deactivateFeature function
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                calling_number:
+                  type: string
+                dtmf_digit:
+                  type: string
+      responses:
+        '200':
+          description: Unsubscribe result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  request_id:
+                    type: string
+
+  /log-dtmf:
+    post:
+      summary: Log DTMF input
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channel_id:
+                  type: string
+                dtmf_digit:
+                  type: string
+                calling_number:
+                  type: string
+      responses:
+        '200':
+          description: DTMF logged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  log_id:
+                    type: integer
+    get:
+      summary: Get all DTMF logs
+      responses:
+        '200':
+          description: Log list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                  count:
+                    type: integer
+
+  /ivr/resolve-menu:
+    post:
+      summary: Resolve menu ID based on calling/called numbers
+      description: Returns a menu ID randomly between 1 and 2, or based on rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - calling_number
+                - called_number
+                - channel_id
+              properties:
+                calling_number:
+                  type: string
+                  example: "+1234567890"
+                called_number:
+                  type: string
+                  example: "100"
+                channel_id:
+                  type: string
+                  example: "1672531200.1"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menu_id:
+                    type: integer
+                    example: 1
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request body"
+        '405':
+          description: Method not allowed
 
   /unsubscribe.php:
     get:
