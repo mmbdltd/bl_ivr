@@ -131,8 +131,7 @@ function deactivateFeature($params): array
     $response = apiRequest('POST', $url, $payload, $headers);
 
     $serviceConfig = $serviceConfigurations['serviceConfig'];
-//    print_r($serviceConfig);
-    print_r($params);
+
  //   $serviceName = 'UNKNOWN';
 //    foreach ($serviceConfig['services'] as $key => $svc) {
 //        if ($svc['subscriptionOfferId'] == $params['chargecode']) {
