@@ -28,13 +28,13 @@ $dtmfDigit = $input['dtmf_digit'] ?? '1';
 $subscriberData = getActiveSubscriberByMsisdn($msisdn, '1');
 
 echo '<pre>';
-print_r($subscriberData);
+//print_r($subscriberData);
 
-echo $subscriberData['offer_code'];
+echo $subscriberData[0]['offer_code'];
 echo '</pre>';
 // --- Prepare and send API request
 $request = [
-    'chargecode' => $subscriberData['offer_code'],
+    'chargecode' => $subscriberData[0]['offer_code'],
     'featureId' => 'DEACTIVATION',
     'requestId' => uniqid('ivr_unsub_', true),
     'msisdn' => $msisdn,
