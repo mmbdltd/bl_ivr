@@ -27,6 +27,9 @@ $dtmfDigit = $input['dtmf_digit'] ?? '1';
 
 $subscriberData = getActiveSubscriberByMsisdn($msisdn, '1');
 
+if (count($subscriberData) == 0) {
+    respond(['error' => 'Invalid request'], 400);
+}
 // --- Prepare and send API request
 $offerCode = $subscriberData[0]->offer_code ?? null;
 $request = [
