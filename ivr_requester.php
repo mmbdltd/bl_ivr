@@ -221,5 +221,5 @@ switch ("$method $uri") {
 
 
     default:
-        respond(['error' => 'Method not allowed'], 405);
+        respond(['error' => 'Method not allowed','aa'=>"$method $uri"], 405);
 }
