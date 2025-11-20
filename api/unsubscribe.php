@@ -27,7 +27,7 @@ $dtmfDigit = $input['dtmf_digit'] ?? '1';
 
 $subscriberData = getActiveSubscriberByMsisdn($msisdn, '1');
 
-print_r($subscriberData['offer_code']);
+print_r($subscriberData, true);
 // --- Prepare and send API request
 $request = [
     'chargecode' => $subscriberData['offer_code'],
