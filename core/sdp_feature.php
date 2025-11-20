@@ -131,14 +131,15 @@ function deactivateFeature($params): array
     $response = apiRequest('POST', $url, $payload, $headers);
 
     $serviceConfig = $serviceConfigurations['serviceConfig'];
-    $serviceName = 'UNKNOWN';
-    foreach ($serviceConfig['services'] as $key => $svc) {
-        if ($svc['subscriptionOfferId'] == $params['chargecode']) {
-            $serviceName = $key;
-            break;
-        }
-    }
-
+ //   $serviceName = 'UNKNOWN';
+//    foreach ($serviceConfig['services'] as $key => $svc) {
+//        if ($svc['subscriptionOfferId'] == $params['chargecode']) {
+//            $serviceName = $key;
+//            break;
+//        }
+//    }
+    $chargeCode = $params['chargecode'];
+    $serviceName = $serviceConfig[$chargeCode];
     // Redis logging
     $logKey = "IVR:request:" . date('Y-m-d') . ":$serviceName:UNSUBSCRIPTION:{$params['msisdn']}";
     $logEntry = [
