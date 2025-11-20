@@ -35,7 +35,7 @@ return [
         'cpid' => '131',
         'sourceNode' => 'momagic',
         'sourceAddress' => '192.168.102.36',
-        'channel' => '4',
+        'channel' => '3',
         'token_url' => $baseUrl . '/auth/login',
         'refresh_url' => $baseUrl . '/auth/RefreshToken',
         'sms_url' => $baseUrl . '/public/SMSMS/SENDSMS',
