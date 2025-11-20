@@ -132,6 +132,7 @@ function deactivateFeature($params): array
 
     $serviceConfig = $serviceConfigurations['serviceConfig'];
     print_r($serviceConfig);
+    print_r($params);
  //   $serviceName = 'UNKNOWN';
 //    foreach ($serviceConfig['services'] as $key => $svc) {
 //        if ($svc['subscriptionOfferId'] == $params['chargecode']) {
@@ -140,7 +141,7 @@ function deactivateFeature($params): array
 //        }
 //    }
     $chargeCode = $params['chargecode'];
-    $serviceName = $serviceConfig[$chargeCode];
+    echo '$serviceName'. $serviceName = $serviceConfig[$chargeCode];
     // Redis logging
     $logKey = "IVR:request:" . date('Y-m-d') . ":$serviceName:UNSUBSCRIPTION:{$params['msisdn']}";
     $logEntry = [
