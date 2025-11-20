@@ -11,47 +11,43 @@ $serviceConfigurations = require __DIR__ . '/../config/service_config.php'; // C
 
 header('Content-Type: application/json');
 
+$method = $_SERVER['REQUEST_METHOD'];
+$uri = strtok($_SERVER['REQUEST_URI'], '?');
+$input = $method === 'POST' ? json_decode(file_get_contents('php://input'), true) : $_GET;
+
 // --- Input Validation
-$msisdn = isset($_GET['msisdn']) ? trim($_GET['msisdn']) : null;
-$mo = isset($_GET['mo']) ? trim($_GET['mo']) : null;
-$shortCode = isset($_GET['sc']) ? trim($_GET['sc']) : '16303';
-
-if (empty($msisdn) || empty($mo)) {
-    echo json_encode(['error' => 'Missing msisdn or mo parameter']);
-    exit;
+if (empty($input['calling_number']) && empty($input['phone_number'])) {
+    respond(['error' => 'Invalid request body'], 400);
 }
 
-$keyword = strtolower(preg_replace('/\s+/', ' ', $mo));
-$matchedKey = null;
+$msisdn = $input['phone_number'] ?? $input['calling_number'];
+$shortCode = $input['called_number'] ?? '16303';
+$dtmfDigit = $input['dtmf_digit'] ?? '1';
 
-// --- Keyword Match (Handles any leading space/case)
-$activationKeywords = $serviceConfigurations['activationKeywords'];
-foreach ($activationKeywords as $key => $conf) {
-    if (str_starts_with($keyword, strtolower($key))) {
-        $matchedKey = $key;
-        break;
-    }
-}
+$requestId = uniqid('ivr_req_', true);
 
-if (!$matchedKey) {
-    echo json_encode(['error' => 'No matching activation keyword']);
-    exit;
-}
+if ("$method" === 'POST') {
 
-$featureId = empty($_GET['consentNo']) ? 'ACTIVATION' : 'CONSENT';
-$serviceConfig = $activationKeywords[$matchedKey];
-$serviceName = $serviceConfig['serviceName'];
+    $request = [
+        'chargecode' => $serviceConfigurations['serviceKeyMap'][$dtmfDigit] ?? $serviceConfigurations['serviceKeyMap']['1'],
+        'featureId' => 'ACTIVATION',
+        'requestId' => $requestId,
+        'consentNo' => '', //consentNo
+        'msisdn' => $msisdn,
+        'shortCode' => $shortCode,
+    ];
 
-// --- Prepare request
-$request = [
-    'chargecode' => $serviceConfig['offerId'],
-    'featureId' => $featureId,
-    'requestId' => uniqid('req_', true),
-    'consentNo' => $_GET['consentNo'] ?? '',
-    'msisdn' => $msisdn,
-    'shortCode' => $shortCode,
-];
 // --- SDP or Consent Activation Logic
-$response = activateFeature($request);
+    $response = activateFeature($request);
 
-echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+} else {
+    respond(['error' => 'Method not allowed', 'aa' => "$method $uri"], 405);
+}
+
+function respond($data, $code = 200)
+{
+    http_response_code($code);
+    echo json_encode($data);
+    exit;
+}

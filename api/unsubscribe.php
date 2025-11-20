@@ -12,38 +12,26 @@ $serviceConfigurations = require __DIR__ . '/../config/service_config.php'; // C
 header('Content-Type: application/json');
 
 // --- Input Validation
-$msisdn = isset($_GET['msisdn']) ? trim($_GET['msisdn']) : null;
-$mo = isset($_GET['mo']) ? trim($_GET['mo']) : null;
+$method = $_SERVER['REQUEST_METHOD'];
+$uri = strtok($_SERVER['REQUEST_URI'], '?');
+$input = $method === 'POST' ? json_decode(file_get_contents('php://input'), true) : $_GET;
 
-if (empty($msisdn) || empty($mo)) {
-    echo json_encode(['error' => 'Missing msisdn or mo parameter']);
-    exit;
+// --- Input Validation
+if (empty($input['calling_number']) && empty($input['phone_number'])) {
+    respond(['error' => 'Invalid request body'], 400);
 }
 
-// --- Keyword match (case/space insensitive)
-$keyword = strtolower(preg_replace('/\s+/', ' ', $mo));
-$matchedKey = null;
+$msisdn = $input['phone_number'] ?? $input['calling_number'];
+$shortCode = $input['called_number'] ?? '16303';
+$dtmfDigit = $input['dtmf_digit'] ?? '1';
 
-$deactivationKeywords = $serviceConfigurations['deactivationKeywords'];
-foreach ($deactivationKeywords as $key => $config) {
-    if (str_starts_with($keyword, strtolower($key))) {
-        $matchedKey = $key;
-        break;
-    }
-}
-
-if (!$matchedKey) {
-    echo json_encode(['error' => 'No matching deactivation keyword']);
-    exit;
-}
-
-$deactivationConfig = $deactivationKeywords[$matchedKey];
+$subscriberData = getActiveSubscriberByMsisdn($msisdn, '1');
 
 // --- Prepare and send API request
 $request = [
-    'chargecode' => $deactivationConfig['offerId'],
+    'chargecode' => $subscriberData['offer_code'],
     'featureId' => 'DEACTIVATION',
-    'requestId' => uniqid('unsub_', true),
+    'requestId' => uniqid('ivr_unsub_', true),
     'msisdn' => $msisdn,
 ];
 
