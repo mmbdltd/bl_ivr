@@ -42,3 +42,9 @@ $request = [
 $response = deactivateFeature($request);
 
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
+function respond($data, $code = 200)
+{
+    http_response_code($code);
+    echo json_encode($data);
+    exit;
+}
