@@ -29,6 +29,9 @@ $subscriberData = getActiveSubscriberByMsisdn($msisdn, '1');
 
 echo '<pre>';
 print_r($subscriberData);
+
+echo $subscriberData['offer_code'];
+echo '</pre>';
 // --- Prepare and send API request
 $request = [
     'chargecode' => $subscriberData['offer_code'],
